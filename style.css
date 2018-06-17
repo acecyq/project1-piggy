@@ -1,0 +1,151 @@
+* {
+	font-family: 'Josefin Sans', sans-serif;
+	color: white;
+}
+
+div {
+	/*border: 1px solid red;*/
+}
+
+body {
+	background-image: url("images/background.jpeg");
+	background-size: cover;
+}
+
+.container {
+	height: 700px;
+	width: 80%;
+	margin: 100px auto;
+	text-align: center;
+	background-color: rgba(70, 0, 124, 0.8);
+}
+
+.row0 {
+	height: 15%;
+	width: 100%;
+}
+
+.title {
+	line-height: 200%;
+}
+
+.col {
+	position: relative;
+	display: inline-block;
+	height: 100%;
+	width: 24%;
+	vertical-align: top;
+	/*overflow: hidden;*/
+}
+
+.middle {
+	position: relative;
+	display: inline-block;
+	height: 100%;
+	width: 49%;
+	text-align: center;
+}
+
+.arrow {
+	position: relative;
+	display: inline-block;
+	height: 100%;
+	width: 20%;
+	visibility: hidden;
+	margin-right: 5%;
+}
+
+.score {
+	position: relative;
+	display: block;
+	height: 19%;
+	width: 100%;
+	border: 2px solid rgba(70, 0, 124, 0.8);
+}
+
+.gap {
+	position: relative;
+	display: block;
+	height: 19%;
+	width: 100%;
+}
+
+.row1 {
+	position: relative;
+	display: block;
+	height:60%;
+	width: 100%;
+	text-align: center;
+	overflow: hidden;
+}
+
+.restart {
+	position: absolute;
+	display: block;
+	width: 100%;
+}
+
+.dice {
+	position: relative;
+	display: inline-block;
+	height: 52%;
+	width: 40%;
+	margin-top: 30%;
+}
+
+.row2 {
+	position: relative;
+	display: block;
+	height: 24%;
+	width: 100%;
+	text-align: center;
+}
+
+.buttons {
+	position: relative;
+	display: inline-block;
+	height: 100%;
+	width: 20%;
+}
+
+.show {
+	visibility: visible;
+}
+
+.border {
+	border: 2px solid red;
+}
+
+#playing0 {
+	background-image: url("images/playing-0.png");
+	background-size: cover;
+}
+
+#playing1 {
+	background-image: url("images/playing-1.png");
+	background-size: cover;
+}
+
+#restart {
+	text-decoration: underline;
+}
+
+#dice0 {
+	background-image: url("images/4.png");
+	background-size: cover;
+}
+
+#dice1 {
+	background-image: url("images/5.png");
+	background-size: cover;
+}
+
+#roll {
+	background-image: url("images/roll.png");
+	background-size: cover;
+}
+
+#hold {
+	background-image: url("images/hold.png");
+	background-size: cover;
+}
