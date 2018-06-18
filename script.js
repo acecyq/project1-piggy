@@ -12,6 +12,7 @@ var mainScore = {
 };
 var player = ["", ""];
 var playing = 0;
+var static = 1;
 var name0 = document.getElementById("name0");
 var name1 = document.getElementById("name1");
 var dice0 = document.getElementById("dice0");
@@ -25,6 +26,13 @@ var hold = document.getElementById("hold");
 var mainScore0 = document.getElementById("mainScore0");
 var mainScore1 = document.getElementById("mainScore1");
 var restart = document.getElementsByClassName("restart")[0];
+var attack = document.getElementById("attack");
+var multiplier = 1;
+var escape = 0;
+var bonus = document.getElementsByClassName("bonus");
+var popup = document.getElementById("popup");
+var pic = document.getElementsByClassName("pic");
+var messageText = document.getElementById("messageText");
 
 
 // set players' names
@@ -44,18 +52,91 @@ do {
 while (isNaN(endScore) === true || endScore === "");
 // player[0] = "MATTHEW";
 // player[1] = "GOLIATH";
-// var endScore = 100;
+// var endScore = 1000;
 name0.textContent = player[0].toUpperCase();
 name1.textContent = player[1].toUpperCase();
+
+
+// generate random number
+
+var mr = function(a) {
+	var result = Math.floor(Math.random() * a + 1);
+	return result;
+}
+
+
+// display element
+
+var show = function(el) {
+	el.style.visibility = "visible";
+}
+
+
+// make element invisible
+
+var hide = function(el) {
+	el.style.visibility = "hidden";
+}
+
+
+// show change player
+
+var showChange = function(a, b, c, url) {
+	popup.style.display = "block";
+	for (var i = 0; i < pic.length; i++) {
+		pic[i].children[0].src = url;
+	}
+	setTimeout(function() {
+		show(pic[a])
+	}, 200);
+	setTimeout(function() {
+		show(pic[b])
+	}, 400);
+	setTimeout(function() {
+		show(pic[c])
+	}, 600);
+	setTimeout(function() {
+		popup.style.display="none";
+	}, 800);
+	setTimeout(function() {
+		for (var i = 0; i < pic.length; i++) {
+			hide(pic[i]);
+		}
+	}, 800);
+
+	
+}
+
+
+var hideAlert = function() {
+	popup.style.display = "none";
+	messageText.style.display = "none";
+}
+
+
+// show alert
+
+var showAlert = function(text) {
+	popup.style.display = "block";
+	messageText.textContent = text;
+	messageText.style.display = "block";
+	document.addEventListener("keypress", hideAlert);
+	// document.addEventListener("click", hideAlert);	
+}
 
 
 // change player
 
 var changePlayer = function() {
+	bonus[playing].style.backgroundImage = "url('images/bonus.png')";
 	if (playing === 0) {
+		showChange(0,1,2,"images/arrowR.png");
 		playing = 1;
+		static = 0;
 	} else {
+		showChange(2,1,0,"images/arrowL.png");
 		playing = 0;
+		static = 1;
 	}
 	for (var i = 0; i < arrow.length; i++) {
 		arrow[i].classList.toggle("show");
@@ -63,6 +144,7 @@ var changePlayer = function() {
 	for (var j = 0; j < scoreBox.length; j++) {
 		scoreBox[j].classList.toggle("border");
 	}
+	multiplier = 1;
 }
 
 
@@ -80,12 +162,16 @@ var updateScore = function() {
 
 var checkDice = function(a, b) {
 	if (a === b) {
-		score[playing] = 0;
-		updateScore();
-		changePlayer();
+		if (escape > 0) {
+			escape -= 1;
+		} else {
+			score[playing] = 0;
+			updateScore();
+			changePlayer();
+		}
 	} else {
 		var sum = a + b;
-		score[playing] += sum;
+		score[playing] += sum * multiplier;
 		updateScore();
 	}
 }
@@ -121,15 +207,63 @@ var rollDice = function() {
 
 	// generate random numbers for dice values
 
-	dice[0] = Math.floor(Math.random() * 6 + 1);
-	dice[1] = Math.floor(Math.random() * 6 + 1);
+	dice[0] = mr(6);
+	dice[1] = mr(6);
 
 	// change images to show dice values
 
 	dice0.style.backgroundImage = "url('images/" + dice[0] + ".png')";
 	dice1.style.backgroundImage = "url('images/" + dice[1] + ".png')";
 
+	giveBonus();
 	checkDice(dice[0], dice[1]);
+}
+
+
+// deal damage to opponent main score
+
+var dealDamage = function() {
+	mainScore[static] -= score[playing];
+	if (mainScore[static] < 0) {
+		mainScore[static] = 0;
+	}
+	score[playing] = 0;
+	updateScore();
+	checkWin();
+	changePlayer();
+}
+
+
+var giveBonus = function() {
+	var bonusType = mr(20);
+	// var bonusType = 20;
+	if (dice[0] !== dice[1]) {
+		switch(bonusType) {
+			case 5:
+				multiplier *= 2;
+				bonus[playing].style.backgroundImage = "url('images/multiply.png')";
+				showAlert("Dice roll X " + multiplier + "!");
+				break;
+			case 10:
+				mainScore[static] = parseInt(mainScore[static] * 0.5);
+				bonus[playing].style.backgroundImage = "url('images/decrease.png')";
+				showAlert("Opponent score - 50%!");
+				break;
+			case 15:
+				escape += 1;
+				bonus[playing].style.backgroundImage = "url('images/shield.png')";
+				showAlert("Escape the next player change X " + escape + " time(s)!");
+				break;
+			case 20:
+				mainScore[playing] = parseInt(mainScore[playing] * 1.5);
+				bonus[playing].style.backgroundImage = "url('images/plus.png')";
+				showAlert("Main score + 50%!");
+				break;
+			default:
+				bonus[playing].style.backgroundImage = "url('images/bonus.png')";
+				break;
+		}
+	}
 }
 
 
@@ -138,15 +272,18 @@ var rollDice = function() {
 var startGame = function() {
 	roll.addEventListener("click", rollDice);
 	hold.addEventListener("click", holdScore);
+	attack.addEventListener("click", dealDamage);
+	restart.addEventListener("click", startGame);	
 	score[0] = 0;
 	score[1] = 0;
 	mainScore[0] = 0;
 	mainScore[1] = 0;
+	multiplier = 1;
 	updateScore();
 }
 
-startGame();
-restart.addEventListener("click", startGame);
+window.onload = startGame();
+
 
 
 

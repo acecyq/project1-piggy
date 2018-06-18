@@ -4,7 +4,7 @@
 }
 
 div {
-	/*border: 1px solid red;*/
+	/*border: 1px solid black;*/
 }
 
 body {
@@ -106,6 +106,12 @@ body {
 	display: inline-block;
 	height: 100%;
 	width: 20%;
+	background-size: cover;
+	background-position: center;
+}
+
+.buttons:hover {
+	filter:brightness(400%);
 }
 
 .show {
@@ -114,6 +120,27 @@ body {
 
 .border {
 	border: 2px solid red;
+}
+
+.bonus {
+	position: relative;
+	display: inline-block;
+	height: 80%;
+	width: 10%;
+	background-image: url("images/bonus.png");
+	background-size: cover;
+	background-position: center;
+	vertical-align: top;
+}
+
+.pic {
+	position: relative;
+	display: inline-block;
+	visibility: hidden;
+	height: 100%;
+	width: 30%;
+	overflow: hidden;
+	padding-top: 15%;
 }
 
 #playing0 {
@@ -142,10 +169,55 @@ body {
 
 #roll {
 	background-image: url("images/roll.png");
-	background-size: cover;
 }
 
 #hold {
 	background-image: url("images/hold.png");
-	background-size: cover;
+}
+
+#attack {
+	background-image: url("images/attack.png");
+}
+
+
+#b1 {
+	margin-left: 5%;
+}
+
+#b0 {
+	margin-right: 5%;
+}
+
+#popup {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(219, 53, 51, 0.9);
+	z-index: 1;
+	text-align: center;
+}
+
+#message {
+	display: inline-block;
+	position: relative;
+	height: 80%;
+	width: 80%;
+	margin-top: 10%;
+	text-align: center;
+}
+
+#messageText {
+	display: none;
+	position: absolute;
+	background-color: white;
+	height: 30%;
+	width: 80%;
+	left: 10%;
+	top: 25%;
+	color: black;
+	font-size: 200%;
+	line-height: 500%;
 }
