@@ -52,7 +52,7 @@ do {
 while (isNaN(endScore) === true || endScore === "");
 // player[0] = "MATTHEW";
 // player[1] = "GOLIATH";
-// var endScore = 1000;
+// var endScore = 50;
 name0.textContent = player[0].toUpperCase();
 name1.textContent = player[1].toUpperCase();
 
@@ -108,6 +108,8 @@ var showChange = function(a, b, c, url) {
 }
 
 
+// hide alert
+
 var hideAlert = function() {
 	popup.style.display = "none";
 	messageText.style.display = "none";
@@ -120,8 +122,7 @@ var showAlert = function(text) {
 	popup.style.display = "block";
 	messageText.textContent = text;
 	messageText.style.display = "block";
-	document.addEventListener("keypress", hideAlert);
-	// document.addEventListener("click", hideAlert);	
+	popup.addEventListener("click", hideAlert);
 }
 
 
@@ -148,13 +149,34 @@ var changePlayer = function() {
 }
 
 
+// show the scores rolling
+
+var updateNumber = function(scoreDisplay, score) {
+	var num = parseInt(scoreDisplay.textContent);
+	// var timer = Math.abs((score - num) * 100);
+	var timer = Math.abs(1000 / (score-num));
+	var roll = setInterval(function() {
+		if (score > num) {
+			num += 1;
+		} else if (score < num) {
+			num -= 1;
+		}
+		scoreDisplay.textContent = num;
+	}, timer);
+	setTimeout(function() {
+		clearInterval(roll);
+	}, 1000);
+}
+
+
 // update the score board
 
 var updateScore = function() {
-	score0.textContent = score[0];
-	score1.textContent = score[1];
-	mainScore0.textContent = mainScore[0];
-	mainScore1.textContent = mainScore[1];
+	
+	updateNumber(score0, score[0]);
+	updateNumber(score1, score[1]);
+	updateNumber(mainScore0, mainScore[0]);
+	updateNumber(mainScore1, mainScore[1]);
 }
 
 
@@ -182,9 +204,13 @@ var checkDice = function(a, b) {
 var checkWin = function() {
 	for (var i = 0; i < 2; i++) {
 		if (mainScore[i] >= endScore) {
-			alert(player[playing] + " has won!");
+			showAlert(player[i] + " has won! Final score is " + mainScore[0] + " and " + mainScore[1] + "!");
 			roll.removeEventListener("click", rollDice);
 			hold.removeEventListener("click", holdScore);
+			attack.removeEventListener("click", dealDamage);
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
@@ -196,8 +222,9 @@ var holdScore = function() {
 	mainScore[playing] += score[playing];
 	score[playing] = 0;
 	updateScore();
-	checkWin();
-	changePlayer();
+	if (checkWin() === false) {
+		changePlayer();	
+	}
 }
 
 
@@ -205,15 +232,31 @@ var holdScore = function() {
 
 var rollDice = function() {
 
+
 	// generate random numbers for dice values
 
 	dice[0] = mr(6);
 	dice[1] = mr(6);
 
-	// change images to show dice values
 
-	dice0.style.backgroundImage = "url('images/" + dice[0] + ".png')";
-	dice1.style.backgroundImage = "url('images/" + dice[1] + ".png')";
+	// animate rolling dice
+
+	var rolling = setInterval(function() {
+		dice0.style.backgroundImage = "url('images/" + mr(6) + ".png')";
+		dice1.style.backgroundImage = "url('images/" + mr(6) + ".png')";
+	}, 200);
+
+	setTimeout(function() {
+		clearInterval(rolling);
+	}, 1000);
+
+
+	// change images to show dice values
+	
+	setTimeout(function() {
+		dice0.style.backgroundImage = "url('images/" + dice[0] + ".png')";
+		dice1.style.backgroundImage = "url('images/" + dice[1] + ".png')";
+	}, 1000);
 
 	giveBonus();
 	checkDice(dice[0], dice[1]);
@@ -229,10 +272,11 @@ var dealDamage = function() {
 	}
 	score[playing] = 0;
 	updateScore();
-	checkWin();
 	changePlayer();
 }
 
+
+// give bonus to player
 
 var giveBonus = function() {
 	var bonusType = mr(20);
@@ -243,6 +287,7 @@ var giveBonus = function() {
 				multiplier *= 2;
 				bonus[playing].style.backgroundImage = "url('images/multiply.png')";
 				showAlert("Dice roll X " + multiplier + "!");
+				checkWin();
 				break;
 			case 10:
 				mainScore[static] = parseInt(mainScore[static] * 0.5);
@@ -258,6 +303,7 @@ var giveBonus = function() {
 				mainScore[playing] = parseInt(mainScore[playing] * 1.5);
 				bonus[playing].style.backgroundImage = "url('images/plus.png')";
 				showAlert("Main score + 50%!");
+				checkWin();
 				break;
 			default:
 				bonus[playing].style.backgroundImage = "url('images/bonus.png')";
